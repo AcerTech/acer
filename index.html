@@ -233,6 +233,8 @@
 
     <div class="bottom-section">
       <div class="buttons">
+        <button class="small" onclick="addNewDhikr()">إضافة ذكر</button>
+        <button class="small" onclick="deleteCurrentDhikr()">حذف الذكر</button>
         <button class="small" onclick="resetCurrentDhikr()">تصفير هذا الذكر</button>
         <button class="small" onclick="nextDhikr()">الذكر التالي</button>
         <button class="small danger" onclick="resetAllAdhkar()">تصفير كل الأذكار يدويًا</button>
@@ -246,8 +248,9 @@
 
   <script>
     const STORAGE_KEY = "acer_azkar_tasbeeh_data_v1";
+    const ADHKAR_STORAGE_KEY = "acer_azkar_custom_adhkar_v1";
 
-    const adhkar = [
+    let adhkar = [
       { text: "سبحان الله", target: 33 },
       { text: "الحمد لله", target: 33 },
       { text: "الله أكبر", target: 34 },
@@ -282,6 +285,28 @@
       const month = String(today.getMonth() + 1).padStart(2, "0");
       const day = String(today.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
+    }
+
+    function saveAdhkarList() {
+      localStorage.setItem(ADHKAR_STORAGE_KEY, JSON.stringify(adhkar));
+    }
+
+    function loadAdhkarList() {
+      const savedAdhkar = localStorage.getItem(ADHKAR_STORAGE_KEY);
+
+      if (!savedAdhkar) {
+        saveAdhkarList();
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(savedAdhkar);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          adhkar = parsed;
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     function buildDhikrList() {
@@ -399,12 +424,62 @@
       updateScreen();
     }
 
+    function addNewDhikr() {
+      const text = prompt("اكتب الذكر الجديد");
+      if (!text || !text.trim()) return;
+
+      const targetInput = prompt("كم العدد المستهدف؟", "100");
+      let target = parseInt(targetInput);
+
+      if (isNaN(target) || target <= 0) {
+        target = 100;
+      }
+
+      adhkar.push({
+        text: text.trim(),
+        target: target
+      });
+
+      counts.push(0);
+      currentIndex = adhkar.length - 1;
+
+      saveAdhkarList();
+      saveData();
+      buildDhikrList();
+      updateScreen();
+    }
+
+    function deleteCurrentDhikr() {
+      if (adhkar.length <= 1) {
+        alert("لا يمكن حذف آخر ذكر");
+        return;
+      }
+
+      const currentName = adhkar[currentIndex].text;
+      const confirmDelete = confirm("هل تريد حذف هذا الذكر؟\n\n" + currentName);
+
+      if (!confirmDelete) return;
+
+      adhkar.splice(currentIndex, 1);
+      counts.splice(currentIndex, 1);
+
+      if (currentIndex >= adhkar.length) {
+        currentIndex = adhkar.length - 1;
+      }
+
+      saveAdhkarList();
+      saveData();
+      buildDhikrList();
+      updateScreen();
+    }
+
     function vibratePhone(duration = 80) {
       if (navigator.vibrate) {
         navigator.vibrate(duration);
       }
     }
 
+    loadAdhkarList();
     loadData();
     buildDhikrList();
     updateScreen();
