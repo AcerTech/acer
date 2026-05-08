@@ -290,9 +290,12 @@
       adhkar.forEach((item, index) => {
         const option = document.createElement("option");
         option.value = index;
-        option.textContent = item.text;
+        const savedCount = counts[index] || 0;
+        option.textContent = item.text + " — " + savedCount;
         dhikrSelect.appendChild(option);
       });
+
+      dhikrSelect.value = currentIndex;
     }
 
     function loadData() {
@@ -339,6 +342,7 @@
     }
 
     function updateScreen() {
+      buildDhikrList();
       const current = adhkar[currentIndex];
       const count = counts[currentIndex];
 
@@ -401,8 +405,8 @@
       }
     }
 
-    buildDhikrList();
     loadData();
+    buildDhikrList();
     updateScreen();
   </script>
 </body>
