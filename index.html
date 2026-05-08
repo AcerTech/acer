@@ -140,16 +140,7 @@
   <main class="app">
     <h1>مسبحة الأذكار</h1>
 
-    <select id="dhikrSelect" onchange="changeDhikr()">
-      <option value="0">سبحان الله</option>
-      <option value="1">الحمد لله</option>
-      <option value="2">الله أكبر</option>
-      <option value="3">لا إله إلا الله</option>
-      <option value="4">أستغفر الله</option>
-      <option value="5">لا حول ولا قوة إلا بالله</option>
-      <option value="6">سبحان الله وبحمده</option>
-      <option value="7">اللهم صل وسلم على نبينا محمد</option>
-    </select>
+    <select id="dhikrSelect" onchange="changeDhikr()"></select>
 
     <div class="dhikr-box" id="dhikrText">سبحان الله</div>
 
@@ -185,7 +176,14 @@
       { text: "أستغفر الله", target: 100 },
       { text: "لا حول ولا قوة إلا بالله", target: 100 },
       { text: "سبحان الله وبحمده", target: 100 },
-      { text: "اللهم صل وسلم على نبينا محمد", target: 100 }
+      { text: "سبحان الله العظيم", target: 100 },
+      { text: "اللهم صل وسلم على نبينا محمد", target: 100 },
+      { text: "حسبي الله ونعم الوكيل", target: 100 },
+      { text: "اللهم اغفر لي وارحمني", target: 100 },
+      { text: "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار", target: 10 },
+      { text: "اللهم إنك عفو تحب العفو فاعف عني", target: 10 },
+      { text: "رضيت بالله ربًا وبالإسلام دينًا وبمحمد ﷺ نبيًا", target: 3 },
+      { text: "اللهم أعني على ذكرك وشكرك وحسن عبادتك", target: 10 }
     ];
 
     let currentIndex = 0;
@@ -205,6 +203,17 @@
       const month = String(today.getMonth() + 1).padStart(2, "0");
       const day = String(today.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
+    }
+
+    function buildDhikrList() {
+      dhikrSelect.innerHTML = "";
+
+      adhkar.forEach((item, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = item.text;
+        dhikrSelect.appendChild(option);
+      });
     }
 
     function loadData() {
@@ -313,6 +322,7 @@
       }
     }
 
+    buildDhikrList();
     loadData();
     updateScreen();
   </script>
