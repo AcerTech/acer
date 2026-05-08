@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مسبحة الأذكار</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Tahoma, Arial, sans-serif;
+      background: linear-gradient(160deg, #0f5132, #198754);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 430px;
+      min-height: 92vh;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 10px 0 20px;
+      font-size: 30px;
+    }
+
+    .dhikr-box {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 18px;
+      min-height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      line-height: 1.7;
+      font-weight: bold;
+    }
+
+    select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 17px;
+      margin-bottom: 20px;
+      direction: rtl;
+      outline: none;
+    }
+
+    .counter {
+      font-size: 80px;
+      font-weight: bold;
+      margin: 20px 0 8px;
+    }
+
+    .target {
+      font-size: 16px;
+      opacity: 0.9;
+      margin-bottom: 18px;
+    }
+
+    .tap-btn {
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      border: 8px solid rgba(255, 255, 255, 0.35);
+      background: radial-gradient(circle, #ffffff, #d1e7dd);
+      color: #0f5132;
+      font-size: 34px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.28);
+      transition: transform 0.08s ease;
+      margin-bottom: 22px;
+    }
+
+    .tap-btn:active {
+      transform: scale(0.96);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    button.small {
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.9);
+      color: #0f5132;
+    }
+
+    .progress-wrap {
+      height: 12px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 15px 0;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: #ffffff;
+      border-radius: 20px;
+      transition: width 0.2s;
+    }
+
+    .message {
+      min-height: 26px;
+      font-size: 17px;
+      margin-top: 10px;
+      color: #fff3cd;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 22px;
+      font-size: 13px;
+      opacity: 0.75;
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <h1>مسبحة الأذكار</h1>
+
+    <select id="dhikrSelect" onchange="changeDhikr()">
+      <option value="0">سبحان الله</option>
+      <option value="1">الحمد لله</option>
+      <option value="2">الله أكبر</option>
+      <option value="3">لا إله إلا الله</option>
+      <option value="4">أستغفر الله</option>
+      <option value="5">لا حول ولا قوة إلا بالله</option>
+      <option value="6">سبحان الله وبحمده</option>
+      <option value="7">اللهم صل وسلم على نبينا محمد</option>
+    </select>
+
+    <div class="dhikr-box" id="dhikrText">سبحان الله</div>
+
+    <div class="counter" id="counter">0</div>
+    <div class="target" id="targetText">الهدف: 33 مرة</div>
+
+    <div class="progress-wrap">
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <button class="tap-btn" onclick="countTasbeeh()">اضغط</button>
+
+    <div class="buttons">
+      <button class="small" onclick="resetCounter()">إعادة العد</button>
+      <button class="small" onclick="nextDhikr()">الذكر التالي</button>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <footer>اجعلها عادة يومية لذكر الله</footer>
+  </main>
+
+  <script>
+    const adhkar = [
+      { text: "سبحان الله", target: 33 },
+      { text: "الحمد لله", target: 33 },
+      { text: "الله أكبر", target: 34 },
+      { text: "لا إله إلا الله", target: 100 },
+      { text: "أستغفر الله", target: 100 },
+      { text: "لا حول ولا قوة إلا بالله", target: 100 },
+      { text: "سبحان الله وبحمده", target: 100 },
+      { text: "اللهم صل وسلم على نبينا محمد", target: 100 }
+    ];
+
+    let currentIndex = 0;
+    let count = 0;
+
+    const dhikrText = document.getElementById("dhikrText");
+    const counter = document.getElementById("counter");
+    const targetText = document.getElementById("targetText");
+    const progress = document.getElementById("progress");
+    const message = document.getElementById("message");
+    const dhikrSelect = document.getElementById("dhikrSelect");
+
+    function updateScreen() {
+      const current = adhkar[currentIndex];
+      dhikrText.textContent = current.text;
+      counter.textContent = count;
+      targetText.textContent = "الهدف: " + current.target + " مرة";
+
+      const percent = Math.min((count / current.target) * 100, 100);
+      progress.style.width = percent + "%";
+
+      if (count === current.target) {
+        message.textContent = "أكملت الهدف، بارك الله فيك";
+        vibratePhone();
+      } else if (count > current.target) {
+        message.textContent = "يمكنك الاستمرار أو الانتقال للذكر التالي";
+      } else {
+        message.textContent = "";
+      }
+    }
+
+    function countTasbeeh() {
+      count++;
+      updateScreen();
+      vibratePhone(20);
+    }
+
+    function resetCounter() {
+      count = 0;
+      updateScreen();
+    }
+
+    function changeDhikr() {
+      currentIndex = Number(dhikrSelect.value);
+      count = 0;
+      updateScreen();
+    }
+
+    function nextDhikr() {
+      currentIndex = (currentIndex + 1) % adhkar.length;
+      dhikrSelect.value = currentIndex;
+      count = 0;
+      updateScreen();
+    }
+
+    function vibratePhone(duration = 80) {
+      if (navigator.vibrate) {
+        navigator.vibrate(duration);
+      }
+    }
+
+    updateScreen();
+  </script>
+</body>
+</html>
