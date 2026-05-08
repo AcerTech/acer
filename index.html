@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>مسبحة الأذكار</title>
   <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       margin: 0;
@@ -34,10 +31,7 @@
       text-align: center;
     }
 
-    h1 {
-      margin: 10px 0 20px;
-      font-size: 30px;
-    }
+    h1 { margin: 10px 0 20px; font-size: 30px; }
 
     .dhikr-box {
       background: rgba(255, 255, 255, 0.18);
@@ -64,17 +58,8 @@
       outline: none;
     }
 
-    .counter {
-      font-size: 80px;
-      font-weight: bold;
-      margin: 20px 0 8px;
-    }
-
-    .target {
-      font-size: 16px;
-      opacity: 0.9;
-      margin-bottom: 18px;
-    }
+    .counter { font-size: 80px; font-weight: bold; margin: 20px 0 8px; }
+    .target { font-size: 16px; opacity: 0.9; margin-bottom: 18px; }
 
     .tap-btn {
       width: 230px;
@@ -91,9 +76,7 @@
       margin-bottom: 22px;
     }
 
-    .tap-btn:active {
-      transform: scale(0.96);
-    }
+    .tap-btn:active { transform: scale(0.96); }
 
     .buttons {
       display: grid;
@@ -111,6 +94,12 @@
       cursor: pointer;
       background: rgba(255, 255, 255, 0.9);
       color: #0f5132;
+    }
+
+    button.danger {
+      grid-column: span 2;
+      background: #fff3cd;
+      color: #664d03;
     }
 
     .progress-wrap {
@@ -138,11 +127,13 @@
       font-weight: bold;
     }
 
-    footer {
-      margin-top: 22px;
+    .date-info {
+      margin-top: 10px;
       font-size: 13px;
-      opacity: 0.75;
+      opacity: 0.85;
     }
+
+    footer { margin-top: 22px; font-size: 13px; opacity: 0.75; }
   </style>
 </head>
 <body>
@@ -172,16 +163,20 @@
     <button class="tap-btn" onclick="countTasbeeh()">اضغط</button>
 
     <div class="buttons">
-      <button class="small" onclick="resetCounter()">إعادة العد</button>
+      <button class="small" onclick="resetCurrentDhikr()">تصفير هذا الذكر</button>
       <button class="small" onclick="nextDhikr()">الذكر التالي</button>
+      <button class="small danger" onclick="resetAllAdhkar()">تصفير كل الأذكار يدويًا</button>
     </div>
 
     <div class="message" id="message"></div>
+    <div class="date-info" id="dateInfo"></div>
 
-    <footer>اجعلها عادة يومية لذكر الله</footer>
+    <footer>يتم حفظ العد تلقائيًا، ويُصفّر يوميًا عند بداية يوم جديد</footer>
   </main>
 
   <script>
+    const STORAGE_KEY = "acer_azkar_tasbeeh_data_v1";
+
     const adhkar = [
       { text: "سبحان الله", target: 33 },
       { text: "الحمد لله", target: 33 },
@@ -194,7 +189,7 @@
     ];
 
     let currentIndex = 0;
-    let count = 0;
+    let counts = Array(adhkar.length).fill(0);
 
     const dhikrText = document.getElementById("dhikrText");
     const counter = document.getElementById("counter");
@@ -202,19 +197,75 @@
     const progress = document.getElementById("progress");
     const message = document.getElementById("message");
     const dhikrSelect = document.getElementById("dhikrSelect");
+    const dateInfo = document.getElementById("dateInfo");
+
+    function getTodayKey() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function loadData() {
+      const todayKey = getTodayKey();
+      const saved = localStorage.getItem(STORAGE_KEY);
+
+      if (!saved) {
+        saveData();
+        return;
+      }
+
+      try {
+        const data = JSON.parse(saved);
+
+        // تصفير تلقائي إذا تغير اليوم
+        if (data.date !== todayKey) {
+          counts = Array(adhkar.length).fill(0);
+          currentIndex = 0;
+          saveData();
+          return;
+        }
+
+        counts = Array.isArray(data.counts) ? data.counts : Array(adhkar.length).fill(0);
+        currentIndex = typeof data.currentIndex === "number" ? data.currentIndex : 0;
+
+        // حماية إذا تغير عدد الأذكار لاحقًا
+        while (counts.length < adhkar.length) counts.push(0);
+        counts = counts.slice(0, adhkar.length);
+
+      } catch (error) {
+        counts = Array(adhkar.length).fill(0);
+        currentIndex = 0;
+        saveData();
+      }
+    }
+
+    function saveData() {
+      const data = {
+        date: getTodayKey(),
+        currentIndex: currentIndex,
+        counts: counts
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
 
     function updateScreen() {
       const current = adhkar[currentIndex];
+      const count = counts[currentIndex];
+
+      dhikrSelect.value = currentIndex;
       dhikrText.textContent = current.text;
       counter.textContent = count;
       targetText.textContent = "الهدف: " + current.target + " مرة";
+      dateInfo.textContent = "تاريخ اليوم: " + getTodayKey();
 
       const percent = Math.min((count / current.target) * 100, 100);
       progress.style.width = percent + "%";
 
       if (count === current.target) {
-        message.textContent = "أكملت الهدف، بارك الله فيك";
-        vibratePhone();
+        message.textContent = "أكملت هدف هذا الذكر، بارك الله فيك";
+        vibratePhone(120);
       } else if (count > current.target) {
         message.textContent = "يمكنك الاستمرار أو الانتقال للذكر التالي";
       } else {
@@ -223,26 +274,36 @@
     }
 
     function countTasbeeh() {
-      count++;
+      counts[currentIndex]++;
+      saveData();
       updateScreen();
       vibratePhone(20);
     }
 
-    function resetCounter() {
-      count = 0;
+    function resetCurrentDhikr() {
+      counts[currentIndex] = 0;
+      saveData();
+      updateScreen();
+    }
+
+    function resetAllAdhkar() {
+      const confirmReset = confirm("هل تريد تصفير كل الأذكار؟");
+      if (!confirmReset) return;
+
+      counts = Array(adhkar.length).fill(0);
+      saveData();
       updateScreen();
     }
 
     function changeDhikr() {
       currentIndex = Number(dhikrSelect.value);
-      count = 0;
+      saveData();
       updateScreen();
     }
 
     function nextDhikr() {
       currentIndex = (currentIndex + 1) % adhkar.length;
-      dhikrSelect.value = currentIndex;
-      count = 0;
+      saveData();
       updateScreen();
     }
 
@@ -252,6 +313,7 @@
       }
     }
 
+    loadData();
     updateScreen();
   </script>
 </body>
