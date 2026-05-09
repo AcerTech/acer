@@ -1,47 +1,43 @@
-const STORAGE_KEY =
-"acer_azkar_tasbeeh_data_v1";
+const STORAGE_KEY = "acer_azkar_tasbeeh_data_v1";
+const LANGUAGE_KEY = "acer_azkar_language_v1";
 
-const LANGUAGE_KEY =
-"acer_azkar_language_v1";
-
-let language =
-localStorage.getItem(LANGUAGE_KEY)
-|| "ar";
+let language = localStorage.getItem(LANGUAGE_KEY) || "ar";
 
 const translations = {
-
-ar:{
-title:"مسبحة الأذكار",
-tap:"اضغط",
-target:"الهدف",
-times:"مرة",
-footer:"الحفظ تلقائي والتصفير يومي",
-date:"تاريخ اليوم",
-addPrompt:"اكتب الذكر الجديد",
-targetPrompt:"كم العدد المستهدف؟",
-deleteConfirm:"هل تريد حذف هذا الذكر؟",
-resetAllConfirm:"هل تريد تصفير كل الأذكار؟",
-lastAlert:"لا يمكن حذف آخر ذكر",
-completed:"أكملت الهدف، بارك الله فيك",
-continueMsg:"يمكنك الاستمرار أو الانتقال للذكر التالي"
-},
-
-en:{
-title:"Azkar Counter",
-tap:"Tap",
-target:"Target",
-times:"times",
-footer:"Auto saved and resets daily",
-date:"Today",
-addPrompt:"Enter new dhikr",
-targetPrompt:"Target count?",
-deleteConfirm:"Delete this dhikr?",
-resetAllConfirm:"Reset all adhkar?",
-lastAlert:"Cannot delete last dhikr",
-completed:"Target completed",
-continueMsg:"You can continue"
-}
-
+  ar:{
+    title:"مسبحة الأذكار",
+    tap:"اضغط",
+    target:"الهدف",
+    times:"مرة",
+    footer:"الحفظ تلقائي والتصفير يومي",
+    date:"تاريخ اليوم",
+    prayerLoading:"جاري تحميل أوقات الصلاة...",
+    prayerError:"تعذر تحميل أوقات الصلاة",
+    addPrompt:"اكتب الذكر الجديد",
+    targetPrompt:"كم العدد المستهدف؟",
+    deleteConfirm:"هل تريد حذف هذا الذكر؟",
+    resetAllConfirm:"هل تريد تصفير كل الأذكار؟",
+    lastAlert:"لا يمكن حذف آخر ذكر",
+    completed:"أكملت الهدف، بارك الله فيك",
+    continueMsg:"يمكنك الاستمرار أو الانتقال للذكر التالي"
+  },
+  en:{
+    title:"Azkar Counter",
+    tap:"Tap",
+    target:"Target",
+    times:"times",
+    footer:"Auto saved and resets daily",
+    date:"Today",
+    prayerLoading:"Loading prayer times...",
+    prayerError:"Could not load prayer times",
+    addPrompt:"Enter new dhikr",
+    targetPrompt:"Target count?",
+    deleteConfirm:"Delete this dhikr?",
+    resetAllConfirm:"Reset all adhkar?",
+    lastAlert:"Cannot delete last dhikr",
+    completed:"Target completed",
+    continueMsg:"You can continue"
+  }
 };
 
 
@@ -62,336 +58,232 @@ continueMsg:"You can continue"
       { text: "رضيت بالله ربًا وبالإسلام دينًا وبمحمد ﷺ نبيًا", target: 3 },
       { text: "اللهم أعني على ذكرك وشكرك وحسن عبادتك", target: 10 }
     ];
+	
+	
+
 
 let currentIndex = 0;
+let counts = Array(adhkar.length).fill(0);
 
-let counts =
-Array(adhkar.length).fill(0);
-
-const dhikrText =
-document.getElementById("dhikrText");
-
-const counter =
-document.getElementById("counter");
-
-const targetText =
-document.getElementById("targetText");
-
-const progress =
-document.getElementById("progress");
-
-const message =
-document.getElementById("message");
-
-const dhikrSelect =
-document.getElementById("dhikrSelect");
-
-const dateInfo =
-document.getElementById("dateInfo");
+const dhikrText = document.getElementById("dhikrText");
+const counter = document.getElementById("counter");
+const targetText = document.getElementById("targetText");
+const progress = document.getElementById("progress");
+const message = document.getElementById("message");
+const dhikrSelect = document.getElementById("dhikrSelect");
+const dateInfo = document.getElementById("dateInfo");
+const prayerTimes = document.getElementById("prayerTimes");
 
 function t(key){
-return translations[language][key];
+  return translations[language][key];
 }
 
 function applyLanguage(){
+  document.documentElement.lang = language;
+  document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
 
-document.documentElement.lang =
-language;
+  document.getElementById("titleText").textContent = t("title");
+  document.getElementById("tapBtn").textContent = t("tap");
+  document.getElementById("footerText").textContent = t("footer");
 
-document.documentElement.dir =
-language === "ar"
-? "rtl"
-: "ltr";
-
-document.getElementById(
-"titleText"
-).textContent = t("title");
-
-document.getElementById(
-"tapBtn"
-).textContent = t("tap");
-
-document.getElementById(
-"footerText"
-).textContent = t("footer");
-
-updateScreen();
+  updateScreen();
+  loadPrayerTimes();
 }
 
 function toggleLanguage(){
-
-language =
-language === "ar"
-? "en"
-: "ar";
-
-localStorage.setItem(
-LANGUAGE_KEY,
-language
-);
-
-applyLanguage();
+  language = language === "ar" ? "en" : "ar";
+  localStorage.setItem(LANGUAGE_KEY, language);
+  applyLanguage();
 }
 
 function getTodayKey(){
+  const today = new Date();
 
-const today = new Date();
-
-return today.getFullYear() + "-" +
-String(today.getMonth()+1)
-.padStart(2,"0") + "-" +
-String(today.getDate())
-.padStart(2,"0");
+  return today.getFullYear() + "-" +
+    String(today.getMonth()+1).padStart(2,"0") + "-" +
+    String(today.getDate()).padStart(2,"0");
 }
 
 function saveData(){
-
-localStorage.setItem(
-STORAGE_KEY,
-
-JSON.stringify({
-
-date:getTodayKey(),
-counts:counts,
-currentIndex:currentIndex
-
-})
-);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    date:getTodayKey(),
+    counts:counts,
+    currentIndex:currentIndex
+  }));
 }
 
 function loadData(){
+  const saved = localStorage.getItem(STORAGE_KEY);
 
-const saved =
-localStorage.getItem(STORAGE_KEY);
+  if(!saved){
+    saveData();
+    return;
+  }
 
-if(!saved){
+  try{
+    const data = JSON.parse(saved);
 
-saveData();
-return;
-}
+    if(data.date !== getTodayKey()){
+      counts = Array(adhkar.length).fill(0);
+      currentIndex = 0;
+      saveData();
+      return;
+    }
 
-try{
+    counts = Array.isArray(data.counts) ? data.counts : Array(adhkar.length).fill(0);
+    currentIndex = typeof data.currentIndex === "number" ? data.currentIndex : 0;
 
-const data =
-JSON.parse(saved);
+    while(counts.length < adhkar.length) counts.push(0);
+    counts = counts.slice(0, adhkar.length);
 
-if(data.date !== getTodayKey()){
-
-counts =
-Array(adhkar.length).fill(0);
-
-currentIndex = 0;
-
-saveData();
-
-return;
-}
-
-counts =
-Array.isArray(data.counts)
-? data.counts
-: Array(adhkar.length).fill(0);
-
-currentIndex =
-typeof data.currentIndex === "number"
-? data.currentIndex
-: 0;
-
-}catch(e){}
+  }catch(e){
+    counts = Array(adhkar.length).fill(0);
+    currentIndex = 0;
+    saveData();
+  }
 }
 
 function buildDhikrList(){
+  dhikrSelect.innerHTML = "";
 
-dhikrSelect.innerHTML = "";
+  adhkar.forEach((item,index)=>{
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = item.text + " — " + (counts[index] || 0);
+    dhikrSelect.appendChild(option);
+  });
 
-adhkar.forEach((item,index)=>{
-
-const option =
-document.createElement("option");
-
-option.value = index;
-
-option.textContent =
-item.text +
-" — " +
-(counts[index] || 0);
-
-dhikrSelect.appendChild(option);
-});
-
-dhikrSelect.value =
-currentIndex;
+  dhikrSelect.value = currentIndex;
 }
 
 function updateScreen(){
+  buildDhikrList();
 
-buildDhikrList();
+  const current = adhkar[currentIndex];
+  const count = counts[currentIndex];
 
-const current =
-adhkar[currentIndex];
+  dhikrText.textContent = current.text;
+  counter.textContent = count;
 
-const count =
-counts[currentIndex];
+  targetText.textContent =
+    t("target") + ": " + current.target + " " + t("times");
 
-dhikrText.textContent =
-current.text;
+  dateInfo.textContent =
+    t("date") + ": " + getTodayKey();
 
-counter.textContent =
-count;
+  const percent = Math.min((count/current.target)*100,100);
+  progress.style.width = percent + "%";
 
-targetText.textContent =
-t("target") +
-": " +
-current.target +
-" " +
-t("times");
-
-dateInfo.textContent =
-t("date") +
-": " +
-getTodayKey();
-
-const percent =
-Math.min(
-(count/current.target)*100,
-100
-);
-
-progress.style.width =
-percent + "%";
-
-if(count === current.target){
-
-message.textContent =
-t("completed");
-
-}else if(count > current.target){
-
-message.textContent =
-t("continueMsg");
-
-}else{
-
-message.textContent = "";
-}
+  if(count === current.target){
+    message.textContent = t("completed");
+  }else if(count > current.target){
+    message.textContent = t("continueMsg");
+  }else{
+    message.textContent = "";
+  }
 }
 
 function countTasbeeh(){
+  counts[currentIndex]++;
+  saveData();
+  updateScreen();
 
-counts[currentIndex]++;
-
-saveData();
-
-updateScreen();
+  if(navigator.vibrate){
+    navigator.vibrate(20);
+  }
 }
 
 function resetCurrentDhikr(){
-
-counts[currentIndex] = 0;
-
-saveData();
-
-updateScreen();
+  counts[currentIndex] = 0;
+  saveData();
+  updateScreen();
 }
 
 function resetAllAdhkar(){
+  if(!confirm(t("resetAllConfirm"))) return;
 
-if(!confirm(
-t("resetAllConfirm")
-)) return;
-
-counts =
-Array(adhkar.length).fill(0);
-
-saveData();
-
-updateScreen();
+  counts = Array(adhkar.length).fill(0);
+  saveData();
+  updateScreen();
 }
 
 function nextDhikr(){
-
-currentIndex =
-(currentIndex + 1)
-% adhkar.length;
-
-saveData();
-
-updateScreen();
+  currentIndex = (currentIndex + 1) % adhkar.length;
+  saveData();
+  updateScreen();
 }
 
 function changeDhikr(){
-
-currentIndex =
-Number(dhikrSelect.value);
-
-saveData();
-
-updateScreen();
+  currentIndex = Number(dhikrSelect.value);
+  saveData();
+  updateScreen();
 }
 
 function addNewDhikr(){
+  const text = prompt(t("addPrompt"));
 
-const text =
-prompt(t("addPrompt"));
+  if(!text || !text.trim()) return;
 
-if(!text || !text.trim())
-return;
+  const targetInput = prompt(t("targetPrompt"),"100");
+  let target = parseInt(targetInput);
 
-const targetInput =
-prompt(
-t("targetPrompt"),
-"100"
-);
+  if(isNaN(target) || target <= 0) target = 100;
 
-let target =
-parseInt(targetInput);
+  adhkar.push({
+    text:text.trim(),
+    target:target
+  });
 
-if(isNaN(target) || target <= 0)
-target = 100;
+  counts.push(0);
+  currentIndex = adhkar.length - 1;
 
-adhkar.push({
-
-text:text.trim(),
-target:target
-
-});
-
-counts.push(0);
-
-currentIndex =
-adhkar.length - 1;
-
-saveData();
-
-updateScreen();
+  saveData();
+  updateScreen();
 }
 
 function deleteCurrentDhikr(){
+  if(adhkar.length <= 1){
+    alert(t("lastAlert"));
+    return;
+  }
 
-if(adhkar.length <= 1){
+  if(!confirm(t("deleteConfirm"))) return;
 
-alert(t("lastAlert"));
+  adhkar.splice(currentIndex,1);
+  counts.splice(currentIndex,1);
 
-return;
+  if(currentIndex >= adhkar.length){
+    currentIndex = adhkar.length - 1;
+  }
+
+  saveData();
+  updateScreen();
 }
 
-if(!confirm(
-t("deleteConfirm")
-)) return;
+async function loadPrayerTimes(){
+  prayerTimes.textContent = t("prayerLoading");
 
-adhkar.splice(currentIndex,1);
+  try{
+    const response = await fetch(
+      "https://api.aladhan.com/v1/timingsByCity?city=Austin&country=US&method=2"
+    );
 
-counts.splice(currentIndex,1);
+    const data = await response.json();
+    const times = data.data.timings;
 
-if(currentIndex >= adhkar.length){
+    if(language === "ar"){
+      prayerTimes.innerHTML =
+        `🌅 الفجر ${times.Fajr} | ☀️ الظهر ${times.Dhuhr} | 🌤 العصر ${times.Asr}<br>
+         🌇 المغرب ${times.Maghrib} | 🌙 العشاء ${times.Isha}`;
+    }else{
+      prayerTimes.innerHTML =
+        `🌅 Fajr ${times.Fajr} | ☀️ Dhuhr ${times.Dhuhr} | 🌤 Asr ${times.Asr}<br>
+         🌇 Maghrib ${times.Maghrib} | 🌙 Isha ${times.Isha}`;
+    }
 
-currentIndex =
-adhkar.length - 1;
-}
-
-saveData();
-
-updateScreen();
+  }catch(e){
+    prayerTimes.textContent = t("prayerError");
+  }
 }
 
 loadData();

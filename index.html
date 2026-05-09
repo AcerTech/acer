@@ -1,130 +1,64 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
   <meta charset="UTF-8" />
-
-  <meta name="viewport"
-        content="width=device-width,
-        initial-scale=1.0,
-        maximum-scale=1.0,
-        user-scalable=no"/>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>مسبحة الأذكار</title>
-
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
 <div class="app">
 
   <div class="top-section">
-
     <div class="header-row">
-
-      <button class="lang-btn"
-              onclick="toggleLanguage()">
-        🌐
-      </button>
-
-      <h1 id="titleText">
-        مسبحة الأذكار
-      </h1>
-
+      <button class="lang-btn" onclick="toggleLanguage()">🌐</button>
+      <h1 id="titleText">مسبحة الأذكار</h1>
     </div>
 
     <div class="select-row">
-
-      <select id="dhikrSelect"
-              onchange="changeDhikr()"></select>
-
+      <select id="dhikrSelect" onchange="changeDhikr()"></select>
     </div>
 
     <div class="manage-row">
-
-      <button class="top-icon-btn"
-              onclick="addNewDhikr()"
-              title="Add">
-        ＋
-      </button>
-
-      <button class="top-icon-btn delete-btn"
-              onclick="deleteCurrentDhikr()"
-              title="Delete">
-        🗑️
-      </button>
-
+      <button class="top-icon-btn" onclick="addNewDhikr()" title="Add">＋</button>
+      <button class="top-icon-btn delete-btn" onclick="deleteCurrentDhikr()" title="Delete">🗑️</button>
     </div>
 
-    <div class="dhikr-box"
-         id="dhikrText">
-      سبحان الله
-    </div>
-
+    <div class="dhikr-box" id="dhikrText">سبحان الله</div>
   </div>
 
   <div class="middle-section">
-
-    <div class="counter"
-         id="counter">
-      0
-    </div>
-
-    <div class="target"
-         id="targetText">
-      الهدف: 33 مرة
-    </div>
+    <div class="counter" id="counter">0</div>
+    <div class="target" id="targetText">الهدف: 33 مرة</div>
 
     <div class="progress-wrap">
-      <div class="progress"
-           id="progress"></div>
+      <div class="progress" id="progress"></div>
     </div>
 
-    <button class="tap-btn"
-            onclick="countTasbeeh()"
-            id="tapBtn">
-      اضغط
-    </button>
-
+    <button class="tap-btn" onclick="countTasbeeh()" id="tapBtn">اضغط</button>
   </div>
 
   <div class="bottom-section">
-
     <div class="icon-bar">
-
-      <button class="icon-btn"
-              onclick="resetCurrentDhikr()">
-        ↺
-      </button>
-
-      <button class="icon-btn"
-              onclick="nextDhikr()">
-        ⏭
-      </button>
-
-      <button class="icon-btn danger-icon"
-              onclick="resetAllAdhkar()">
-        ⚠️
-      </button>
-
+      <button class="icon-btn" onclick="resetCurrentDhikr()">↺</button>
+      <button class="icon-btn" onclick="nextDhikr()">⏭</button>
+      <button class="icon-btn danger-icon" onclick="resetAllAdhkar()">⚠️</button>
     </div>
 
-    <div class="message"
-         id="message"></div>
+    <div class="message" id="message"></div>
 
-    <div class="date-info"
-         id="dateInfo"></div>
+    <div class="prayer-times" id="prayerTimes">
+      Loading prayer times...
+    </div>
 
-    <footer id="footerText">
-      الحفظ تلقائي والتصفير يومي
-    </footer>
+    <div class="date-info" id="dateInfo"></div>
 
+    <footer id="footerText">الحفظ تلقائي والتصفير يومي</footer>
   </div>
 
 </div>
 
 <script src="app.js"></script>
-
 </body>
 </html>
