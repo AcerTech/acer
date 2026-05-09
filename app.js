@@ -190,12 +190,33 @@ function updateScreen(){
 }
 
 function countTasbeeh(){
+
   counts[currentIndex]++;
+
   saveData();
+
   updateScreen();
 
-  if(navigator.vibrate){
-    navigator.vibrate(20);
+  vibratePhone(18);
+
+if(count === current.target){
+
+  message.textContent =
+  t("completed");
+
+  vibratePhone([120,40,120]);
+}
+
+}
+
+
+function vibratePhone(duration = 25){
+
+  if(
+    navigator.vibrate &&
+    typeof navigator.vibrate === "function"
+  ){
+    navigator.vibrate(duration);
   }
 }
 
