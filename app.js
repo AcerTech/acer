@@ -1,7 +1,9 @@
 const STORAGE_KEY = "acer_azkar_tasbeeh_data_v1";
 const LANGUAGE_KEY = "acer_azkar_language_v1";
+const PRAYER_METHOD_KEY = "acer_azkar_prayer_method_v1";
 
 let language = localStorage.getItem(LANGUAGE_KEY) || "ar";
+let prayerMethod = localStorage.getItem(PRAYER_METHOD_KEY) || "2";
 
 const translations = {
   ar:{
@@ -40,7 +42,6 @@ const translations = {
   }
 };
 
-
     let adhkar = [
       { text: "سبحان الله", target: 33 },
       { text: "الحمد لله", target: 33 },
@@ -58,9 +59,6 @@ const translations = {
       { text: "رضيت بالله ربًا وبالإسلام دينًا وبمحمد ﷺ نبيًا", target: 3 },
       { text: "اللهم أعني على ذكرك وشكرك وحسن عبادتك", target: 10 }
     ];
-	
-	
-
 
 let currentIndex = 0;
 let counts = Array(adhkar.length).fill(0);
@@ -73,6 +71,7 @@ const message = document.getElementById("message");
 const dhikrSelect = document.getElementById("dhikrSelect");
 const dateInfo = document.getElementById("dateInfo");
 const prayerTimes = document.getElementById("prayerTimes");
+const methodSelect = document.getElementById("methodSelect");
 
 function t(key){
   return translations[language][key];
@@ -94,6 +93,12 @@ function toggleLanguage(){
   language = language === "ar" ? "en" : "ar";
   localStorage.setItem(LANGUAGE_KEY, language);
   applyLanguage();
+}
+
+function changePrayerMethod(){
+  prayerMethod = methodSelect.value;
+  localStorage.setItem(PRAYER_METHOD_KEY, prayerMethod);
+  loadPrayerTimes();
 }
 
 function getTodayKey(){
@@ -265,7 +270,7 @@ async function loadPrayerTimes(){
 
   try{
     const response = await fetch(
-      "https://api.aladhan.com/v1/timingsByCity?city=Austin&country=US&method=2"
+      `https://api.aladhan.com/v1/timingsByCity?city=Austin&country=US&method=${prayerMethod}`
     );
 
     const data = await response.json();
@@ -286,5 +291,6 @@ async function loadPrayerTimes(){
   }
 }
 
+methodSelect.value = prayerMethod;
 loadData();
 applyLanguage();
