@@ -1,861 +1,130 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8" />
+  <meta charset="UTF-8" />
 
-<meta name="viewport"
-content="width=device-width,
-initial-scale=1.0,
-maximum-scale=1.0,
-user-scalable=no"/>
+  <meta name="viewport"
+        content="width=device-width,
+        initial-scale=1.0,
+        maximum-scale=1.0,
+        user-scalable=no"/>
 
-<title>مسبحة الأذكار</title>
+  <title>مسبحة الأذكار</title>
 
-<style>
-
-*{
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
-}
-
-html,
-body{
-
-margin:0;
-
-width:100%;
-height:100dvh;
-
-overflow:hidden;
-
-font-family:Tahoma,Arial,sans-serif;
-
-background:
-radial-gradient(circle at top,
-rgba(255,255,255,0.18),
-transparent 35%),
-
-linear-gradient(
-160deg,
-#064e3b,
-#0f766e,
-#16a34a
-);
-
-color:white;
-}
-
-body{
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-padding:
-env(safe-area-inset-top)
-env(safe-area-inset-right)
-env(safe-area-inset-bottom)
-env(safe-area-inset-left);
-}
-
-.app{
-
-width:100%;
-max-width:500px;
-
-height:100dvh;
-
-padding:18px 16px 12px;
-
-display:flex;
-flex-direction:column;
-
-background:
-rgba(255,255,255,0.08);
-
-backdrop-filter:blur(14px);
-}
-
-h1{
-
-margin:0 0 10px;
-
-font-size:clamp(24px,7vw,36px);
-
-text-align:center;
-
-font-weight:bold;
-}
-
-.select-row{
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-margin-top:6px;
-}
-
-.select-row select{
-
-flex:1;
-}
-
-select{
-
-width:100%;
-
-padding:13px 14px;
-
-border:none;
-outline:none;
-
-border-radius:18px;
-
-font-size:16px;
-font-weight:bold;
-
-direction:rtl;
-
-background:
-rgba(255,255,255,0.95);
-
-color:#064e3b;
-}
-
-.top-icon-btn{
-
-width:48px;
-height:48px;
-
-border:none;
-
-border-radius:16px;
-
-background:
-rgba(255,255,255,0.94);
-
-color:#065f46;
-
-font-size:24px;
-
-cursor:pointer;
-
-box-shadow:
-0 8px 18px rgba(0,0,0,0.18);
-
-transition:0.08s;
-}
-
-.top-icon-btn:active{
-transform:scale(0.92);
-}
-
-.delete-btn{
-background:#fff3cd;
-}
-
-.dhikr-box{
-
-margin-top:12px;
-
-background:
-rgba(255,255,255,0.16);
-
-border:
-1px solid rgba(255,255,255,0.22);
-
-border-radius:24px;
-
-min-height:90px;
-
-padding:14px;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-text-align:center;
-
-font-size:
-clamp(22px,6vw,30px);
-
-line-height:1.6;
-
-font-weight:bold;
-
-box-shadow:
-0 12px 26px rgba(0,0,0,0.14);
-}
-
-.middle-section{
-
-display:flex;
-flex-direction:column;
-
-justify-content:center;
-align-items:center;
-
-flex:1;
-}
-
-.counter{
-
-font-size:
-clamp(70px,18vw,110px);
-
-font-weight:bold;
-
-line-height:1;
-
-margin-top:10px;
-
-text-shadow:
-0 8px 20px rgba(0,0,0,0.24);
-}
-
-.target{
-
-font-size:15px;
-
-opacity:0.9;
-
-margin-top:4px;
-}
-
-.progress-wrap{
-
-width:100%;
-
-height:11px;
-
-background:
-rgba(255,255,255,0.24);
-
-border-radius:20px;
-
-overflow:hidden;
-
-margin-top:14px;
-}
-
-.progress{
-
-height:100%;
-
-width:0%;
-
-background:white;
-
-transition:0.2s;
-}
-
-.tap-btn{
-
-width:min(58vw,230px);
-height:min(58vw,230px);
-
-min-width:180px;
-min-height:180px;
-
-margin:20px auto;
-
-border:none;
-
-border-radius:50%;
-
-background:
-radial-gradient(circle at 35% 25%,
-#ffffff,
-#ecfdf5 40%,
-#bbf7d0);
-
-color:#065f46;
-
-font-size:
-clamp(30px,8vw,40px);
-
-font-weight:bold;
-
-cursor:pointer;
-
-box-shadow:
-0 18px 30px rgba(0,0,0,0.28),
-inset 0 -10px 18px rgba(6,95,70,0.12);
-
-border:
-9px solid rgba(255,255,255,0.35);
-
-transition:0.08s;
-}
-
-.tap-btn:active{
-transform:scale(0.95);
-}
-
-.icon-bar{
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-gap:14px;
-
-margin-top:10px;
-}
-
-.icon-btn{
-
-width:54px;
-height:54px;
-
-border:none;
-
-border-radius:50%;
-
-background:
-rgba(255,255,255,0.94);
-
-color:#065f46;
-
-font-size:26px;
-
-cursor:pointer;
-
-box-shadow:
-0 8px 18px rgba(0,0,0,0.18);
-
-transition:0.08s;
-}
-
-.icon-btn:active{
-transform:scale(0.9);
-}
-
-.danger-icon{
-background:#fff3cd;
-color:#664d03;
-}
-
-.message{
-
-min-height:22px;
-
-text-align:center;
-
-font-size:15px;
-
-color:#fef3c7;
-
-font-weight:bold;
-
-margin-top:8px;
-}
-
-.date-info{
-
-text-align:center;
-
-font-size:12px;
-
-opacity:0.8;
-
-margin-top:4px;
-}
-
-footer{
-
-text-align:center;
-
-font-size:12px;
-
-opacity:0.72;
-
-margin-top:4px;
-}
-
-@media (max-height:720px){
-
-.tap-btn{
-
-width:170px;
-height:170px;
-
-min-width:170px;
-min-height:170px;
-}
-
-.counter{
-font-size:72px;
-}
-
-.dhikr-box{
-min-height:74px;
-}
-
-footer,
-.date-info{
-display:none;
-}
-}
-
-</style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="app">
 
-<div class="top-section">
+  <div class="top-section">
 
-<h1>مسبحة الأذكار</h1>
+    <div class="header-row">
 
-<div class="select-row">
+      <button class="lang-btn"
+              onclick="toggleLanguage()">
+        🌐
+      </button>
 
-<button class="top-icon-btn"
-onclick="addNewDhikr()"
-title="إضافة ذكر">
-＋
-</button>
+      <h1 id="titleText">
+        مسبحة الأذكار
+      </h1>
 
-<select id="dhikrSelect"
-onchange="changeDhikr()"></select>
+    </div>
 
-<button class="top-icon-btn delete-btn"
-onclick="deleteCurrentDhikr()"
-title="حذف الذكر">
-🗑️
-</button>
+    <div class="select-row">
+
+      <select id="dhikrSelect"
+              onchange="changeDhikr()"></select>
+
+    </div>
+
+    <div class="manage-row">
+
+      <button class="top-icon-btn"
+              onclick="addNewDhikr()"
+              title="Add">
+        ＋
+      </button>
+
+      <button class="top-icon-btn delete-btn"
+              onclick="deleteCurrentDhikr()"
+              title="Delete">
+        🗑️
+      </button>
+
+    </div>
+
+    <div class="dhikr-box"
+         id="dhikrText">
+      سبحان الله
+    </div>
+
+  </div>
+
+  <div class="middle-section">
+
+    <div class="counter"
+         id="counter">
+      0
+    </div>
+
+    <div class="target"
+         id="targetText">
+      الهدف: 33 مرة
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress"
+           id="progress"></div>
+    </div>
+
+    <button class="tap-btn"
+            onclick="countTasbeeh()"
+            id="tapBtn">
+      اضغط
+    </button>
+
+  </div>
+
+  <div class="bottom-section">
+
+    <div class="icon-bar">
+
+      <button class="icon-btn"
+              onclick="resetCurrentDhikr()">
+        ↺
+      </button>
+
+      <button class="icon-btn"
+              onclick="nextDhikr()">
+        ⏭
+      </button>
+
+      <button class="icon-btn danger-icon"
+              onclick="resetAllAdhkar()">
+        ⚠️
+      </button>
+
+    </div>
+
+    <div class="message"
+         id="message"></div>
+
+    <div class="date-info"
+         id="dateInfo"></div>
+
+    <footer id="footerText">
+      الحفظ تلقائي والتصفير يومي
+    </footer>
+
+  </div>
 
 </div>
 
-<div class="dhikr-box"
-id="dhikrText">
-سبحان الله
-</div>
-
-</div>
-
-<div class="middle-section">
-
-<div class="counter"
-id="counter">
-0
-</div>
-
-<div class="target"
-id="targetText">
-الهدف: 33 مرة
-</div>
-
-<div class="progress-wrap">
-<div class="progress"
-id="progress"></div>
-</div>
-
-<button class="tap-btn"
-onclick="countTasbeeh()">
-اضغط
-</button>
-
-</div>
-
-<div class="bottom-section">
-
-<div class="icon-bar">
-
-<button class="icon-btn"
-onclick="resetCurrentDhikr()"
-title="تصفير">
-↺
-</button>
-
-<button class="icon-btn"
-onclick="nextDhikr()"
-title="التالي">
-⏭
-</button>
-
-<button class="icon-btn danger-icon"
-onclick="resetAllAdhkar()"
-title="تصفير الكل">
-⚠️
-</button>
-
-</div>
-
-<div class="message"
-id="message"></div>
-
-<div class="date-info"
-id="dateInfo"></div>
-
-<footer>
-الحفظ تلقائي والتصفير يومي
-</footer>
-
-</div>
-
-</div>
-
-<script>
-
-const STORAGE_KEY =
-"acer_azkar_tasbeeh_data_v1";
-
-const ADHKAR_STORAGE_KEY =
-"acer_azkar_custom_adhkar_v1";
-
-let adhkar = [
-
-{ text:"سبحان الله", target:33 },
-{ text:"الحمد لله", target:33 },
-{ text:"الله أكبر", target:34 },
-{ text:"لا إله إلا الله", target:100 },
-{ text:"أستغفر الله", target:100 },
-{ text:"لا حول ولا قوة إلا بالله", target:100 },
-{ text:"سبحان الله وبحمده", target:100 },
-{ text:"سبحان الله العظيم", target:100 },
-{ text:"اللهم صل وسلم على نبينا محمد", target:100 }
-
-];
-
-let currentIndex = 0;
-
-let counts =
-Array(adhkar.length).fill(0);
-
-const dhikrText =
-document.getElementById("dhikrText");
-
-const counter =
-document.getElementById("counter");
-
-const targetText =
-document.getElementById("targetText");
-
-const progress =
-document.getElementById("progress");
-
-const message =
-document.getElementById("message");
-
-const dhikrSelect =
-document.getElementById("dhikrSelect");
-
-const dateInfo =
-document.getElementById("dateInfo");
-
-function getTodayKey(){
-
-const today = new Date();
-
-return today.getFullYear() + "-" +
-String(today.getMonth()+1).padStart(2,"0") + "-" +
-String(today.getDate()).padStart(2,"0");
-}
-
-function saveAdhkarList(){
-
-localStorage.setItem(
-ADHKAR_STORAGE_KEY,
-JSON.stringify(adhkar)
-);
-}
-
-function loadAdhkarList(){
-
-const saved =
-localStorage.getItem(
-ADHKAR_STORAGE_KEY
-);
-
-if(!saved){
-
-saveAdhkarList();
-return;
-}
-
-try{
-
-const parsed =
-JSON.parse(saved);
-
-if(Array.isArray(parsed)
-&& parsed.length > 0){
-
-adhkar = parsed;
-}
-
-}catch(e){}
-}
-
-function saveData(){
-
-localStorage.setItem(
-STORAGE_KEY,
-
-JSON.stringify({
-
-date:getTodayKey(),
-counts:counts,
-currentIndex:currentIndex
-
-})
-);
-}
-
-function loadData(){
-
-const saved =
-localStorage.getItem(STORAGE_KEY);
-
-if(!saved){
-
-saveData();
-return;
-}
-
-try{
-
-const data =
-JSON.parse(saved);
-
-if(data.date !== getTodayKey()){
-
-counts =
-Array(adhkar.length).fill(0);
-
-currentIndex = 0;
-
-saveData();
-
-return;
-}
-
-counts =
-Array.isArray(data.counts)
-? data.counts
-: Array(adhkar.length).fill(0);
-
-currentIndex =
-typeof data.currentIndex === "number"
-? data.currentIndex
-: 0;
-
-}catch(e){}
-}
-
-function buildDhikrList(){
-
-dhikrSelect.innerHTML = "";
-
-adhkar.forEach((item,index)=>{
-
-const option =
-document.createElement("option");
-
-option.value = index;
-
-option.textContent =
-item.text +
-" — " +
-(counts[index] || 0);
-
-dhikrSelect.appendChild(option);
-});
-
-dhikrSelect.value =
-currentIndex;
-}
-
-function updateScreen(){
-
-buildDhikrList();
-
-const current =
-adhkar[currentIndex];
-
-const count =
-counts[currentIndex];
-
-dhikrText.textContent =
-current.text;
-
-counter.textContent =
-count;
-
-targetText.textContent =
-"الهدف: " +
-current.target +
-" مرة";
-
-dateInfo.textContent =
-"تاريخ اليوم: " +
-getTodayKey();
-
-const percent =
-Math.min(
-(count/current.target)*100,
-100
-);
-
-progress.style.width =
-percent + "%";
-
-if(count === current.target){
-
-message.textContent =
-"أكملت الهدف، بارك الله فيك";
-
-vibratePhone(120);
-
-}else{
-
-message.textContent = "";
-}
-}
-
-function countTasbeeh(){
-
-counts[currentIndex]++;
-
-saveData();
-
-updateScreen();
-
-vibratePhone(20);
-}
-
-function resetCurrentDhikr(){
-
-counts[currentIndex] = 0;
-
-saveData();
-
-updateScreen();
-}
-
-function resetAllAdhkar(){
-
-const ok =
-confirm("هل تريد تصفير كل الأذكار؟");
-
-if(!ok) return;
-
-counts =
-Array(adhkar.length).fill(0);
-
-saveData();
-
-updateScreen();
-}
-
-function nextDhikr(){
-
-currentIndex =
-(currentIndex + 1)
-% adhkar.length;
-
-saveData();
-
-updateScreen();
-}
-
-function changeDhikr(){
-
-currentIndex =
-Number(dhikrSelect.value);
-
-saveData();
-
-updateScreen();
-}
-
-function addNewDhikr(){
-
-const text =
-prompt("اكتب الذكر الجديد");
-
-if(!text || !text.trim())
-return;
-
-const targetInput =
-prompt("كم العدد المستهدف؟","100");
-
-let target =
-parseInt(targetInput);
-
-if(isNaN(target) || target <= 0)
-target = 100;
-
-adhkar.push({
-
-text:text.trim(),
-target:target
-
-});
-
-counts.push(0);
-
-currentIndex =
-adhkar.length - 1;
-
-saveAdhkarList();
-
-saveData();
-
-updateScreen();
-}
-
-function deleteCurrentDhikr(){
-
-if(adhkar.length <= 1){
-
-alert("لا يمكن حذف آخر ذكر");
-
-return;
-}
-
-const ok =
-confirm("هل تريد حذف هذا الذكر؟");
-
-if(!ok) return;
-
-adhkar.splice(currentIndex,1);
-
-counts.splice(currentIndex,1);
-
-if(currentIndex >= adhkar.length){
-
-currentIndex =
-adhkar.length - 1;
-}
-
-saveAdhkarList();
-
-saveData();
-
-updateScreen();
-}
-
-function vibratePhone(duration=80){
-
-if(navigator.vibrate){
-
-navigator.vibrate(duration);
-}
-}
-
-loadAdhkarList();
-loadData();
-updateScreen();
-
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
